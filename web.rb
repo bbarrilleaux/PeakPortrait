@@ -2,12 +2,16 @@ require 'thin'
 require 'sinatra'
 require 'slim'
 require 'rinruby'
+require 'pry' 
 
 set :slim, :pretty => true
 
 get '/' do
-
-  @output = 'asdfghjk'
+  R.eval <<EOF
+  output = 1+1
+EOF
+  @output = R.output
+#  binding.pry
   slim :index
 end
 
@@ -33,5 +37,8 @@ html
 @@index
 p
   | This a test using Sinatra web framework in Ruby, deployed via Heroku. Lots of pieces of technology are working together!
+p
+  | I'm using R to add 1+1. It's giving me back the answer:
   pre
     = @output
+

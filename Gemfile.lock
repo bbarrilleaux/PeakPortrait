@@ -12,6 +12,7 @@ GEM
     rack (1.5.2)
     rack-protection (1.5.1)
       rack
+    rinruby (2.0.3)
     sinatra (1.4.4)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -32,6 +33,7 @@ PLATFORMS
 
 DEPENDENCIES
   pry
+  rinruby
   sinatra
   slim
   thin
