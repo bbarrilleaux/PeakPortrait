@@ -7,8 +7,9 @@ require 'pry'
 set :slim, :pretty => true
 
 get '/' do
+  R.x = 3
   R.eval <<EOF
-  output = 1+1
+  output = x+1
 EOF
   @output = R.output
 #  binding.pry
