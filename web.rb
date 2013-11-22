@@ -1,45 +1,33 @@
-require 'thin'
 require 'sinatra'
 require 'slim'
 require 'rinruby'
 require 'pry' 
+require 'base64'
 
 set :slim, :pretty => true
 
 get '/' do
-  R.x = 3
-  R.eval <<EOF
-  output = x+1
-EOF
-  @output = R.output
-#  binding.pry
   slim :index
 end
 
-__END__
-@@layout
-doctype html
-html
-  head
-    title Slim
-    meta charset="utf-8"
-      
-  body
-    header
-      h1 
-       a href="http://bbdesignproject.wordpress.com" Bonnie's prototype website	
-    
-    == yield
-    
-  footer
-    small
-      | This is some tiny text at the bottom! Yay!
+post '/' do
+  @start_column = params[:start_column]
+  chromosome_column = params[:chromosome_column]
+  puts @chromosome_column
+  puts @start_column
+  R.eval <<EOF
+   data <- rnorm(100, #{chromosome_column})
+   png("stuff.png")
+    hist(data, main="Here's a demo graph.", xlab="Centered on the chromosome column you entered.")
+   dev.off()
+EOF
+  @data_uri = Base64.strict_encode64(File.open("stuff.png", "rb").read)
+  imagetag = '<img alt="graph" src="data:image/png;base64,%s">' % @data_uri
 
-@@index
-p
-  | This a test using Sinatra web framework in Ruby, deployed via Heroku. Lots of pieces of technology are working together!
-p
-  | I'm using R to add 1+1. It's giving me back the answer:
-  pre
-    = @output
+  html = "<html>"
+  html += "<head><title>Your Chrainbow is ready!</title></head>"
+  html += "<body>"
+  html += imagetag
 
+#  slim :task
+end

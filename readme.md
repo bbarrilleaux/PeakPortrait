@@ -1,1 +1,1 @@
-This is a test of using R in a Ruby app. 
+This is a web app that uses R with rinruby to generate graphs.
