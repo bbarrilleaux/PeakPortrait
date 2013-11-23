@@ -21,7 +21,7 @@ post '/' do
   puts @start_column
   R.eval <<EOF
    data <- rnorm(100, #{chromosome_column})
-   png("./tmp/stuff.png")
+   png("./tmp/stuff.png", type="cairo")
     hist(data, main="Here's a demo graph.", xlab="Centered on the chromosome column you entered.")
    dev.off()
 EOF
