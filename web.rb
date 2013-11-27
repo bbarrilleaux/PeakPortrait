@@ -18,17 +18,20 @@ post '/' do
   @start_column = params[:start_column]
   @chromosome_column = params[:chromosome_column]
   if params[:file]
+    puts params[:file]
     tempfile = params[:file][:tempfile]
     filename = params[:file][:filename]
     File.open("./tmp/input.txt", "w") { |f| f.write(tempfile.read) }
   else
-      raise "No file!"
+      raise "You didn't select a file."
   end
  
   R.eval <<EOF
-   data <- rnorm(100, #{@chromosome_column})
+    getwd()
+#   data <- rnorm(100, #{@chromosome_column})
+    data <- read.table("./tmp/input.txt",sep="\t")
    png("./tmp/graph.png", type="cairo-png")
-    hist(data, main="Here's a demo graph.", xlab="Centered on the chromosome column you entered.")
+    hist(data[,2], main="Here's a demo graph.", xlab="Centered on the chromosome column you entered.")
    dev.off()
 EOF
 
