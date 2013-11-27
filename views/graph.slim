@@ -10,4 +10,8 @@ p
 
   = @start_column
 
-img alt="graph" src="data:image/png;base64,#{@data_uri}"
+- if @data_uri
+	img alt="graph" src="data:image/png;base64,#{@data_uri}"
+
+- else
+	| Couldn't make a graph.
