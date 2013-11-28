@@ -1,0 +1,60 @@
+
+$blue:#164A44;
+$green:#27621E;
+$grey: #3C5552;
+$white:#FFFFFF;
+$lightgreen:#96CA8E;
+$lightblue:#8FB7B3;
+
+$background:$white;
+$logo-color:$blue;
+$heading-color:$blue;
+
+body{
+  background:$background;
+  padding:20px;
+  margin:2px;
+  } 
+
+header{
+  background:$grey;
+  color:$lightblue;
+  padding:10px;
+  font-weight:bold;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  border-top-right-radius: 16px;
+  border-top-left-radius: 16px;
+  text-align:center;
+  max-width:840px;
+}
+
+#navlist li
+{
+display: inline;
+list-style-type: none;
+padding: 4px;
+overflow:hidden;
+margin:5px;
+font-weight:bold;
+background-color:$lightblue;
+text-align:center;
+border-bottom-left-radius: 6px;
+border-bottom-right-radius: 6px;
+border-top-right-radius: 6px;
+border-top-left-radius: 6px;
+border-style:outset;
+border-color:$lightgreen;
+}
+
+h1.logo{
+  font-family: helvetica,arial,sans-serif;
+  font-size: 96px;
+  color:$logo-color;
+  margin:4px;
+  text-align: center;
+  font-weight: normal;
+  opacity:0.4;
+  background: transparent url(/logo.png) 10% 0 no-repeat;
+  }
+

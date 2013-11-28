@@ -1,4 +1,5 @@
 doctype html
+link rel="stylesheet" media="screen, projection" href="/styles.css"
 html
   head
     title Chrainbow
@@ -6,19 +7,17 @@ html
       
   body
     header
-      h1 Chrainbow
-      h2 Visualize your genomic location data by chromosome. 
+      h1.logo Chrainbow
+      h2 Visualize genomic location data by chromosome
        
     == yield
     
   footer
-    p
-    ul
-      li: a href="/" Chrainbow maker
+    ul id="navlist"
+      li: a href="/" Home
       li: a href="/help" Help
     small
+      a href="http://bonniebarrilleaux.com" Bonnie Barrilleaux       
       p
-      a href="http://bonniebarrilleaux.com" Bonnie Barrilleaux
-      |         
       a href="http://bbdesignproject.wordpress.com" Produced for Design: Creation of Artifacts in Society
 

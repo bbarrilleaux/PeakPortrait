@@ -1,5 +1,5 @@
 p
-  | Enter information about your file. 
+  | Pick some options and upload a file. 
 
 form action="/" method="POST" enctype='multipart/form-data'
   |  File type: 
@@ -21,8 +21,7 @@ form action="/" method="POST" enctype='multipart/form-data'
     option yes
   p
   p
-  | Select a file to graph. 
-  p
+  | Select a file:  
   input type="file" name="file"
-  p
-  input.button type="submit" value="Submit"
+
+  input.button type="submit" value="Graph it!"

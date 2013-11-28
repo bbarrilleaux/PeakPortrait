@@ -3,9 +3,15 @@ require 'slim'
 require 'rinruby'
 require 'pry' 
 require 'base64'
+require 'sass'
 
 set :slim, :pretty => true
 set :root, File.dirname(__FILE__)
+
+
+get '/styles.css' do
+  scss :styles
+end
 
 get '/' do
   slim :index
@@ -39,7 +45,7 @@ post '/' do
     filename = params[:file][:filename]
     File.open("./tmp/input.txt", "w") { |f| f.write(tempfile.read) }
   else
-      raise "You didn't select a file."
+    raise "You didn't select a file?"
   end
  
   R.eval <<EOF
@@ -47,7 +53,7 @@ post '/' do
     getwd()
     data <- read.table("./tmp/input.txt",sep="\t")
    png("./tmp/graph.png", type="cairo-png")
-    qplot(data[, #{@start_column}], main="Here's a demo graph.", xlab="Centered on the chromosome column you entered.")
+    qplot(data[, #{@start_column}], main="Here's a demo graph.", xlab="Relative distance from centromere")
    dev.off()
 EOF
 
