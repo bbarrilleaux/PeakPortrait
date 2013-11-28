@@ -50,10 +50,18 @@ post '/' do
  
   R.eval <<EOF
     library(ggplot2)
+    library(gtools) #for reordering chromosome names
     getwd()
-    data <- read.table("./tmp/input.txt",sep="\t")
-   png("./tmp/graph.png", type="cairo-png")
-    qplot(data[, #{@start_column}], main="Here's a demo graph.", xlab="Relative distance from centromere")
+    data <- read.table("./tmp/input.txt",sep="\t",header=TRUE)
+    data <- data.frame(data[,1], data[,#{@start_column}])
+    names(data) <- c("Chromosome", "loc")
+    data$Chromosome <- factor(data$Chromosome, mixedsort(levels(data$Chromosome)))
+    theme_set(theme_gray(base_size = 18)) #make fonts bigger
+    png("./tmp/graph.png", type="cairo-png", width = 1000, height=500)
+      hist_results <- ggplot(data, aes(x=loc/1000000, colour=Chromosome))
+      hist_results + geom_freqpoly() + 
+        xlab("Relative distance from centromere (Mbp)") +
+        facet_wrap("Chromosome", drop=FALSE, scales="free_x")
    dev.off()
 EOF
 
