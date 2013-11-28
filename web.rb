@@ -15,8 +15,24 @@ post '/' do
   path="./tmp"
   FileUtils.mkdir(path) unless File.exists?(path)
 
-  @start_column = params[:start_column]
-  @chromosome_column = params[:chromosome_column]
+  if params[:file_type] == "GFF"
+    @start_column = 4
+    @end_column = 5
+    @score_column = 6
+  else
+    @start_column = 2
+    @end_column = 3
+    @score_column = 5
+  end
+
+  if params[:use_peak_widths] == "no"
+    @end_column = nil
+  end
+
+  if params[:use_score] == "no"
+    @score_column = nil
+  end
+
   if params[:file]
     puts params[:file]
     tempfile = params[:file][:tempfile]
@@ -27,11 +43,11 @@ post '/' do
   end
  
   R.eval <<EOF
+    library(ggplot2)
     getwd()
-#   data <- rnorm(100, #{@chromosome_column})
     data <- read.table("./tmp/input.txt",sep="\t")
    png("./tmp/graph.png", type="cairo-png")
-    hist(data[,2], main="Here's a demo graph.", xlab="Centered on the chromosome column you entered.")
+    qplot(data[, #{@start_column}], main="Here's a demo graph.", xlab="Centered on the chromosome column you entered.")
    dev.off()
 EOF
 
@@ -44,4 +60,8 @@ EOF
     File.delete("./tmp/graph.png")
   end
   slim :graph
+end
+
+get '/help' do
+  slim :help
 end

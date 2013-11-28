@@ -1,16 +1,9 @@
 
 
-p
-  | Here's the column your chromosome names are in: 
-
-  = @chromosome_column
-
-p
-  | And here's the column your start coordinates are in: 
-
-  = @start_column
-
 - if @data_uri
+	p
+	| Here's your graph.
+	p
 	img alt="graph" src="data:image/png;base64,#{@data_uri}"
 
 - else

@@ -1,29 +1,24 @@
 p
   | Enter information about your file. 
 
-
-p
-  | What columns contain your chromosome names and start coordinates?
-
 form action="/" method="POST" enctype='multipart/form-data'
-  | Chromosome names: 
-  select name="chromosome_column"
-    option 1
-    option 2
-    option 3
-    option 4
-    option 5
-    option 6
+  |  File type: 
+  select name="file_type"
+    option BED
+    option GFF
+    option narrowPeak
   p
   p
-  |  Start coordinates: 
-  select name="start_column"
-    option 1
-    option 2
-    option 3
-    option 4
-    option 5
-    option 6
+  |  Use peak widths: 
+  select name="use_peak_widths"
+    option no
+    option yes
+  p
+  p
+  |  Use intensity or score values: 
+  select name="use_score"
+    option no
+    option yes
   p
   p
   | Select a file to graph. 
