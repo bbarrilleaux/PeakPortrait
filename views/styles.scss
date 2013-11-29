@@ -14,6 +14,7 @@ body{
   background:$background;
   padding:20px;
   margin:2px;
+  max-width:900px;
   } 
 
 header{
@@ -45,6 +46,7 @@ border-top-right-radius: 6px;
 border-top-left-radius: 6px;
 border-style:outset;
 border-color:$lightgreen;
+a:link {text-decoration:none;}   
 }
 
 h1.logo{

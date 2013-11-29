@@ -22,21 +22,25 @@ post '/' do
   FileUtils.mkdir(path) unless File.exists?(path)
 
   if params[:file_type] == "GFF"
-    @start_column = 4
-    @end_column = 5
-    @score_column = 6
+    R.start_column = 4
+    R.end_column = 5
   else
-    @start_column = 2
-    @end_column = 3
-    @score_column = 5
+    R.start_column = 2
+    R.end_column = 3
   end
 
   if params[:use_peak_widths] == "no"
-    @end_column = nil
+    R.end_column = 0
   end
 
   if params[:use_score] == "no"
-    @score_column = nil
+    R.score_column = 0
+  elsif params[:use_score] == "5 (BED/broadPeak)"
+    R.score_column = 5
+  elsif params[:use_score] == "6 (GFF)"
+    R.score_column = 6
+  else
+    R.score_column = params[:use_score].to_i
   end
 
   if params[:file]
@@ -51,18 +55,29 @@ post '/' do
   R.eval <<EOF
     library(ggplot2)
     library(gtools) #for reordering chromosome names
-    getwd()
-    data <- read.table("./tmp/input.txt",sep="\t",header=TRUE)
-    data <- data.frame(data[,1], data[,#{@start_column}])
-    names(data) <- c("Chromosome", "loc")
+    
+    peakfile <- read.table("./tmp/input.txt",sep="\t",header=TRUE)
+    data <- data.frame(peakfile[,1], peakfile[,start_column])
+    if(end_column && !score_column) { 
+      data <- cbind(data, peakfile[,end_column] - peakfile[,start_column]) 
+    } else if (!end_column && score_column) {
+      data <- cbind(data, peakfile[,score_column])
+    } else if (end_column && score_column) {
+      data <- cbind(data, (peakfile[,end_column] - peakfile[,start_column]) * peakfile[,score_column] )
+    } else {
+      data <- cbind(data, rep(1,nrow(data)))
+    }
+    names(data) <- c("Chromosome", "loc", "size")
     data$Chromosome <- factor(data$Chromosome, mixedsort(levels(data$Chromosome)))
     theme_set(theme_gray(base_size = 18)) #make fonts bigger
-    png("./tmp/graph.png", type="cairo-png", width = 1000, height=500)
-      hist_results <- ggplot(data, aes(x=loc/1000000, colour=Chromosome))
+
+    png("./tmp/graph.png", type="cairo-png", width = 900, height=600)
+      hist_results <- ggplot(data, aes(x=loc/1000000, colour=Chromosome, weight=size))
       hist_results + geom_freqpoly() + 
         xlab("Relative distance from centromere (Mbp)") +
         facet_wrap("Chromosome", drop=FALSE, scales="free_x")
    dev.off()
+
 EOF
 
   if File.exists?("./tmp/input.txt")
