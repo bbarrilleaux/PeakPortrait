@@ -1,10 +1,14 @@
 
+- if @species
+	h3 Species detected: #{@species}.
+- else
+	h3 Failed to detect what species the data comes from. 
 
 - if @data_uri
 	p
-	| Here's your graph.
+	| The graph was created successfully.
 	p
 	img alt="graph" src="data:image/png;base64,#{@data_uri}"
 
 - else
-	| Couldn't make a graph.
+	| Failed to generate a graph.

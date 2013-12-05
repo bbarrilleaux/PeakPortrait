@@ -1,3 +1,5 @@
+views/.DS_Store
+.DS_Store
 tmp/*
 .sass-cache/*
 .Rapp.history
