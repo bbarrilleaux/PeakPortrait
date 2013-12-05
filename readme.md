@@ -1,1 +1,1 @@
-This is a web app that uses R with rinruby to generate graphs.
+This is a web app that uses R with rinruby to generate graphs of chromosomal locations, such as BED or GFF files produced by Chip-seq, RNA-seq, or microarray experiments.

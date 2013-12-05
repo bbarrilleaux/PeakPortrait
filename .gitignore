@@ -1,2 +1,4 @@
 .sass-cache/*
 .Rapp.history
+.RData
+.Rhistory
