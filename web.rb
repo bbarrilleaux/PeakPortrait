@@ -47,7 +47,14 @@ post '/' do
     puts params[:file]
     tempfile = params[:file][:tempfile]
     filename = params[:file][:filename]
-    File.open("./tmp/input.txt", "w") { |f| f.write(tempfile.read) }
+
+    inputfile = File.open("./tmp/input.txt", "w")
+    text = tempfile.read
+    text.gsub!(/\r\n?/, "\n") #make sure line endings are consistent
+    text.each_line do |line|
+            #only keep lines that start with "chr". other lines are probably headers/comments/junk.
+            inputfile.write(line) if /^chr/.match(line) 
+    end
   else
     raise "You didn't select a file?"
   end
@@ -56,8 +63,13 @@ post '/' do
     library(ggplot2)
     library(gtools) #for reordering chromosome names
     
-    peakfile <- read.table("./tmp/input.txt",sep="\t",header=TRUE)
-    data <- data.frame(peakfile[,1], peakfile[,start_column])
+    peakfile <- read.table("./tmp/input.txt",sep="\t",header=FALSE)
+    if(is.factor(peakfile[,start_column])) { #detect header line if it exists
+      peakfile <- read.table("./tmp/input.txt",sep="\t",header=TRUE)
+    }
+
+    data <- data.frame(as.factor(peakfile[,1]), peakfile[,start_column])
+
     if(end_column && !score_column) { 
       data <- cbind(data, peakfile[,end_column] - peakfile[,start_column]) 
     } else if (!end_column && score_column) {
@@ -67,11 +79,24 @@ post '/' do
     } else {
       data <- cbind(data, rep(1,nrow(data)))
     }
+
     names(data) <- c("Chromosome", "loc", "size")
+
+    if("chr20" %in% data$Chromosome | "chr21" %in% data$Chromosome | "chr22" %in% data$Chromosome) {
+      species = "human"
+      chromlengths <- read.table("./HumanChromosomeLengths.txt",sep="\t",header=TRUE)
+      data <- rbind(data,chromlengths)
+    } else {
+      species = "mouse"
+    }
+
+#need to insert something to convert chrX/chrY to lower if "chrx" or "chry" %in% data$Chromosome.
+
     data$Chromosome <- factor(data$Chromosome, mixedsort(levels(data$Chromosome)))
     theme_set(theme_gray(base_size = 18)) #make fonts bigger
 
     png("./tmp/graph.png", type="cairo-png", width = 900, height=600)
+
       hist_results <- ggplot(data, aes(x=loc/1000000, colour=Chromosome, weight=size))
       hist_results + geom_freqpoly() + 
         xlab("Relative distance from centromere (Mbp)") +
@@ -81,7 +106,7 @@ post '/' do
 EOF
 
   if File.exists?("./tmp/input.txt")
-    File.delete("./tmp/input.txt")
+#    File.delete("./tmp/input.txt")
   end
 
   if File.exists?("./tmp/graph.png")
