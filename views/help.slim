@@ -9,11 +9,11 @@ p
 h3 Species detection
 p
 p
-| The species is automatically detected based on the fact that humans have more chromosomes than mice. A files containing any data from chromosomes 20, 21, and/or 22 is assumed to be human data, while a file without any data from those chromosomes is assumed to be mouse data. 
+| The species is automatically identified based on the fact that humans have more chromosomes than mice. A files containing any data from chromosomes 20, 21, and/or 22 is likely to be human data, while a file without any data from those chromosomes is likely to be mouse data. 
 p
 | Graph axes are automatically set to the lengths of the chromosomes obtained from the Genome Reference Consortium (GRCm38.p2 for mouse, and GRCh37.p13 for human). These lengths have remained fairly constant (no more than ~1% change in length) for the past several genome builds, so the graph axes are also roughly compatible with data aligned to any of the past several genome builds (e.g. mm8, mm9, or mm10 for mouse data; hg17, hg18, or hg19 for human data).
 p
-| If a file is uploaded that contains too few chromosomes to be mouse data (i.e. no data from chromosomes 18 or 19), the species is considered "unknown" and the x-axis limits are determined by the data itself. This makes it possible, although not necessarily recommended, to use PeakPortrait for graphing data from C. elegans, A. thaliana, etc. 
+| If a file is uploaded that contains too few chromosomes to be mouse data (i.e. no data from chromosomes 18 or 19), the species is considered "unknown" and the x-axis limits are determined by the data itself. This makes it possible, although not necessarily recommended, to use PeakPortrait to display data from other species including C. elegans or A. thaliana.
 p
 p
 h3 How are the peak widths and intensities used? 

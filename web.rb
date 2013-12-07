@@ -85,14 +85,12 @@ post '/' do
     if("chr20" %in% data$Chromosome | "chr21" %in% data$Chromosome | "chr22" %in% data$Chromosome) {
       species = "human"
       data <- rbind(data, read.table("./HumanChromosomeLengths.txt",sep="\t",header=TRUE))
-    } else if ("chr19" %in% data$Chromosome | "chr18" %in% data$Chromosome) {
+    } else if ("chr19" %in% data$Chromosome | "chr18" %in% data$Chromosome | "chr17" %in% data$Chromosome) {
       species = "mouse"
       data <- rbind(data, read.table("./MouseChromosomeLengths.txt",sep="\t",header=TRUE))
     } else {
       species = "unknown"
     }
-
-#need to insert something to convert chrX/chrY to lower if "chrx" or "chry" %in% data$Chromosome.
 
     data$Chromosome <- factor(data$Chromosome, mixedsort(levels(data$Chromosome)))
     theme_set(theme_gray(base_size = 18)) #make fonts bigger
@@ -101,7 +99,7 @@ post '/' do
 
       hist_results <- ggplot(data, aes(x=loc/1000000, colour=Chromosome, weight=size))
       hist_results + geom_freqpoly() + 
-        xlab("Distance along chromosome (Mbp)") + ylab("Density")
+        xlab("Distance along chromosome (Mbp)") + ylab("Density") +
         facet_wrap("Chromosome", drop=FALSE, scales="free_x")
    dev.off()
 
@@ -110,14 +108,14 @@ EOF
   @species = R.species
 
   if File.exists?("./tmp/input.txt")
-#    File.delete("./tmp/input.txt")
+    File.delete("./tmp/input.txt")
   end
 
   if File.exists?("./tmp/graph.png")
     @data_uri = Base64.strict_encode64(File.open("./tmp/graph.png", "rb").read)
     File.delete("./tmp/graph.png")
   end
-  slim :graph #send it the species! 
+  slim :graph 
 end
 
 get '/help' do

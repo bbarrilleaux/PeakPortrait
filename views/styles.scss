@@ -10,6 +10,12 @@ $background:$white;
 $logo-color:$blue;
 $heading-color:$blue;
 
+
+#wrapper {
+     width: 800px;
+     margin: 0 auto;
+}
+
 body{
   background:$background;
   padding:20px;
