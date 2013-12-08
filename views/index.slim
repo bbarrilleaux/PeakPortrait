@@ -1,6 +1,13 @@
 p
   | Pick some options and upload a file. 
 
+- unless @data_file.errors.empty?
+  h2 There was a problem with your submission:
+  ul
+    - for error in @data_file.errors
+      li
+        = error
+
 form action="/" method="POST" enctype='multipart/form-data'
   |  File type: 
   select name="file_type"

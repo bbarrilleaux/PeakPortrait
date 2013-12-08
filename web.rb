@@ -8,11 +8,17 @@ require 'sass'
 set :slim, :pretty => true
 set :root, File.dirname(__FILE__)
 
-
 class ChromosomeDataFile
-  def initialize(params)
+  def initialize(params = {})
     @params = params
-    raise "You didn't select a file?" unless @params[:file]
+    @errors = []
+  end
+
+  attr_accessor :errors
+
+  def valid?
+    @errors << "Need to select a file to graph." unless @params[:file]
+    @errors.empty?
   end
 
   def gff?
@@ -62,19 +68,19 @@ get '/styles.css' do
 end
 
 get '/' do
+  @data_file = ChromosomeDataFile.new 
   slim :index
 end
 
 post '/' do
-  data_file = ChromosomeDataFile.new params
-
-  R.start_column = data_file.start_column
-  R.end_column = data_file.end_column
-  R.score_column = data_file.score_column
-
+  @data_file = ChromosomeDataFile.new params
+  return slim :index unless @data_file.valid?
+  R.start_column = @data_file.start_column
+  R.end_column = @data_file.end_column
+  R.score_column = @data_file.score_column
   temp_file_path = "./tmp/input.txt"
   R.file = temp_file_path
-  data_file.write_temp_file(temp_file_path)
+  @data_file.write_temp_file(temp_file_path)
  
   R.eval <<EOF
     library(ggplot2)
@@ -85,20 +91,15 @@ post '/' do
     data <- rbind(data, fetchChromosomeLengths(species))
     data$Chromosome <- factor(data$Chromosome, mixedsort(levels(data$Chromosome)))
     theme_set(theme_gray(base_size = 18)) # make fonts bigger
-
     png("./tmp/graph.png", type="cairo-png", width = 900, height=600)
       hist_results <- ggplot(data, aes(x = loc/1000000, colour = Chromosome, weight = size))
       hist_results + geom_freqpoly() + 
-        xlab("Position along chromosome (Mbp)") + ylab("Density") +
+        xlab("Position along chromosome (Mbp)") + ylab("Intensity") +
         facet_wrap("Chromosome", drop = FALSE, scales = "free_x")
    dev.off()
-
 EOF
-
   @species = R.species
-
-  data_file.delete_temp_file(temp_file_path)
-
+  @data_file.delete_temp_file(temp_file_path)
   if File.exists?("./tmp/graph.png")
     @data_uri = Base64.strict_encode64(File.open("./tmp/graph.png", "rb").read)
     File.delete("./tmp/graph.png")
