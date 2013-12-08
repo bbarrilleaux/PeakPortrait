@@ -24,19 +24,36 @@ body{
   } 
 
 header{
-  background:$grey;
-  color:$lightblue;
-  padding:10px;
+  color:$blue;
+  padding:1px;
   font-weight:bold;
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
-  border-top-right-radius: 16px;
-  border-top-left-radius: 16px;
   text-align:center;
-  max-width:840px;
+  max-width:900px;
+  border-bottom-style: double;
+  border-bottom-width:2px 0;
+  border-bottom-color:$blue;
+}
+
+h1.logo{
+  font-family: helvetica,arial,sans-serif;
+  font-size: 80px;
+  color:$logo-color;
+  margin-left:auto;
+  margin-right:auto;
+  margin-bottom:20px;
+  margin-top:10px;
+  width:70%;
+  text-align: center;
+  font-weight: normal;
+  background: transparent url(/logo.png) 10% 0 no-repeat;
+  }
+
+h2{
+  margin: 0 0 10px 0;
 }
 
 h3{
+    margin: 0;
     text-align: center;
 }
 
@@ -81,15 +98,4 @@ background-color:$lightblue;
     color:$grey;
 }
 
-
-h1.logo{
-  font-family: helvetica,arial,sans-serif;
-  font-size: 96px;
-  color:$logo-color;
-  margin:4px;
-  text-align: center;
-  font-weight: normal;
-  opacity:0.4;
-  background: transparent url(/logo.png) 10% 0 no-repeat;
-  }
 

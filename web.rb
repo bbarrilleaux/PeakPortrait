@@ -79,47 +79,14 @@ post '/' do
   R.eval <<EOF
     library(ggplot2)
     library(gtools) # for reordering chromosome names
-    
-    peaks <- read.table(file, sep = "\t", header = FALSE)
-    # detect header line if it exists
-    if (is.factor(peaks[, start_column])) { 
-      peaks <- read.table(file, sep = "\t", header = TRUE)
-    }
-
-    data <- data.frame(as.factor(peaks[, 1]), peaks[, start_column])
-
-    if (end_column && !score_column) { 
-      data <- cbind(data, peaks[, end_column] - peaks[, start_column]) 
-    } else if (!end_column && score_column) {
-      data <- cbind(data, peaks[, score_column])
-    } else if (end_column && score_column) {
-      data <- cbind(data, 
-                    (peaks[, end_column] - peaks[, start_column]) * peaks[, score_column])
-    } else {
-      data <- cbind(data, rep(1, nrow(data)))
-    }
-
-    names(data) <- c("Chromosome", "loc", "size")
-
-    if ("chr20" %in% data$Chromosome | 
-        "chr21" %in% data$Chromosome | 
-        "chr22" %in% data$Chromosome) {
-      species = "human"
-      data <- rbind(data, read.table("./HumanChromosomeLengths.txt", sep = "\t", header = TRUE))
-    } else if ("chr19" %in% data$Chromosome | 
-               "chr18" %in% data$Chromosome | 
-               "chr17" %in% data$Chromosome) {
-      species = "mouse"
-      data <- rbind(data, read.table("./MouseChromosomeLengths.txt", sep = "\t", header = TRUE))
-    } else {
-      species = "unknown"
-    }
-
+    source("./prepare_data.r")    
+    data <- parsePeakFile(file, start_column, end_column, score_column)
+    species <- checkSpecies(data)
+    data <- rbind(data, fetchChromosomeLengths(species))
     data$Chromosome <- factor(data$Chromosome, mixedsort(levels(data$Chromosome)))
     theme_set(theme_gray(base_size = 18)) # make fonts bigger
 
     png("./tmp/graph.png", type="cairo-png", width = 900, height=600)
-
       hist_results <- ggplot(data, aes(x = loc/1000000, colour = Chromosome, weight = size))
       hist_results + geom_freqpoly() + 
         xlab("Position along chromosome (Mbp)") + ylab("Density") +
