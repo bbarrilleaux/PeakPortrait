@@ -38,9 +38,9 @@ checkSpecies <- function(data) {
 
 fetchChromosomeLengths <- function(species) {
   if (species == "human") {
-    return(read.table("./HumanChromosomeLengths.txt", sep = "\t", header = TRUE))
+    return(read.table("./data/HumanChromosomeLengths.txt", sep = "\t", header = TRUE))
   } else if (species == "mouse") {
-    return(read.table("./MouseChromosomeLengths.txt", sep = "\t", header = TRUE))
+    return(read.table("./data/MouseChromosomeLengths.txt", sep = "\t", header = TRUE))
   } else {
     return()
   }

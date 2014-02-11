@@ -4,6 +4,7 @@ require 'rinruby'
 require 'pry' 
 require 'base64'
 require 'sass'
+require 'coffee_script'
 
 set :slim, :pretty => true
 set :root, File.dirname(__FILE__)
@@ -85,7 +86,7 @@ post '/' do
   R.eval <<EOF
     library(ggplot2)
     library(gtools) # for reordering chromosome names
-    source("./prepare_data.r")    
+    source("./R/prepare_data.r")    
     data <- parsePeakFile(file, start_column, end_column, score_column)
     species <- checkSpecies(data)
     data <- rbind(data, fetchChromosomeLengths(species))

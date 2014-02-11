@@ -1,4 +1,5 @@
 
+
 $blue:#164A44;
 $green:#27621E;
 $grey: #3C5552;
@@ -9,6 +10,20 @@ $lightblue:#8FB7B3;
 $background:$white;
 $logo-color:$blue;
 $heading-color:$blue;
+
+/* This CSS is used for the Show/Hide functionality. */
+   .more {
+      display: none;
+      border-top: 1px solid #FFFFFF;
+      border-bottom: 1px solid #FFFFFF; }
+   a.showLink, a.hideLink {
+      text-decoration: none;
+        font-size: 24px;
+      color: $grey;
+      padding-left: 8px; }
+   a.hideLink { }
+   a.showLink:hover, a.hideLink:hover, a.showLink:visited {
+      border-bottom: 1px dotted $grey; color: $grey; }
 
 
 #wrapper {
