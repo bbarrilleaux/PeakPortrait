@@ -24,15 +24,16 @@ p
 
 form action="/" method="POST" enctype='multipart/form-data' class="form-horizontal"
   p
-  | Select a file containing genomic interval data to graph.
+  label for="fileInput" Select a file containing genomic interval data to graph.
+  input type="file" name="file" class="btn btn-default btn-file" id="fileInput"
   p
-  input type="file" name="file" class="btn btn-default btn-file"
-  p
-  |  File type: 
+  label for="fileInput" File type: 
   select class="form-control" name="file_type" 
     option BED
     option GFF
     option narrowPeak
+  p
+  label for="use_peak_widths" Incorporate peak width and height information into the graph (optional):
   p
   input type="checkbox" class="checkbox-inline" name="use_peak_widths" id="use_peak_widths" value="yes"  Use peak widths?
   p
