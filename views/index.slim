@@ -1,5 +1,19 @@
+script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript"
+
+coffee:
+  
+  toggleScoreInput = () ->
+    if document.getElementById("score_column").disabled is true
+      document.getElementById("score_column").disabled = false
+    else
+      document.getElementById("score_column").disabled = true
+    return
+  window.toggleScoreInput = toggleScoreInput
+
+
+
 p
-  | Pick some options and upload a file. 
+p
 
 - unless @data_file.errors.empty?
   h2 There was a problem with your submission:
@@ -8,37 +22,22 @@ p
       li
         = error
 
-form action="/" method="POST" enctype='multipart/form-data'
+form action="/" method="POST" enctype='multipart/form-data' class="form-horizontal"
+  p
+  | Select a file containing genomic interval data to graph.
+  p
+  input type="file" name="file" class="btn btn-default btn-file"
+  p
   |  File type: 
-  select name="file_type"
+  select class="form-control" name="file_type" 
     option BED
     option GFF
     option narrowPeak
   p
+  input type="checkbox" class="checkbox-inline" name="use_peak_widths" id="use_peak_widths" value="yes"  Use peak widths?
   p
-  |  Use peak widths: 
-  select name="use_peak_widths"
-    option no
-    option yes
+  input type="checkbox" class="checkbox-inline" name="use_score" id="use_score" value="yes" onclick="toggleScoreInput();"  Use score?
   p
+  input type="text" class="form-control bfh-number" name="score_column" id="score_column" disabled="true" placeholder="If using scores, enter number of score column, or leave it blank to guess from the file type."
   p
-  |  Use intensity or score values? Select the column containing scores: 
-  select name="use_score"
-    option no
-    option 2
-    option 3
-    option 4
-    option 5 (BED/broadPeak)
-    option 6 (GFF)
-    option 7
-    option 8
-    option 9
-    option 10
-    option 11
-    option 12
-  p
-  p
-  | Select a file:  
-  input type="file" name="file"
-
-  input.button type="submit" value="Graph it!"
+  input.button type="submit" value="Graph it!" class="btn btn-primary btn-lg btn-block"

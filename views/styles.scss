@@ -1,17 +1,36 @@
-
+@import "bootstrap";
 
 $blue:#164A44;
-$green:#27621E;
 $grey: #3C5552;
 $white:#FFFFFF;
-$lightgreen:#96CA8E;
 $lightblue:#8FB7B3;
 
 $background:$white;
 $logo-color:$blue;
 $heading-color:$blue;
 
-/* This CSS is used for the Show/Hide functionality. */
+/* this makes a pretty file upload button */
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 999px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+/* show/hide extra text. */
    .more {
       display: none;
       border-top: 1px solid #FFFFFF;

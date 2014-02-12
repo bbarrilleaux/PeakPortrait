@@ -5,6 +5,7 @@ require 'pry'
 require 'base64'
 require 'sass'
 require 'coffee_script'
+require 'bootstrap-sass'
 
 set :slim, :pretty => true
 set :root, File.dirname(__FILE__)
@@ -31,19 +32,17 @@ class ChromosomeDataFile
   end
 
   def end_column
-    return 0 if @params[:use_peak_widths] == "no"
+    return 0 unless @params[:use_peak_widths]
     gff? ? 5 : 3
   end
 
   def score_column
-    if @params[:use_score] == "no"
+    if @params[:score_column] != ""
+      return @params[:score_column].to_i
+    elsif @params[:use_score]
+      return gff? ? 6 : 5
+    else 
       return 0
-    elsif @params[:use_score] == "5 (BED/broadPeak)"
-      return 5
-    elsif @params[:use_score] == "6 (GFF)"
-      return 6
-    else
-      return @params[:use_score].to_i
     end
   end
 
@@ -83,6 +82,10 @@ post '/' do
   R.file = temp_file_path
   @data_file.write_temp_file(temp_file_path)
  
+#  print "start col = %d" % @data_file.start_column
+#  print "end col = %d" % @data_file.end_column
+#  print "score col = %d" % @data_file.score_column
+
   R.eval <<EOF
     library(ggplot2)
     library(gtools) # for reordering chromosome names
