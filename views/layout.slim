@@ -9,13 +9,21 @@ html
         
     body
       header
-        h1.logo PeakPortrait
-        h3 Visualize genomic location data by chromosome
-      ul class="nav nav-pills nav-justified"
-        li: a href="/" Generate a PeakPortrait
-        li: a href="/help" Get help
-        li: a href="http://github.com/biobonnie/PeakPortrait" target="_newtab" Github source
+        div class="navbar navbar-fixed-top" role="navigation"
+          div class="navbar"
+            div class="container"
+              a class="navbar-brand" href="" PeakPortrait
+              ul class="nav nav-pills nav-justified" 
+                li class="active"
+                  a href="/" 
+                    span class="glyphicon glyphicon-picture"
+                    |  Generate a PeakPortrait
+                li: a href="/help" 
+                  span class="glyphicon glyphicon-question-sign"
+                  |  Get help                  
+                li: a href="http://github.com/biobonnie/PeakPortrait" target="_newtab" 
+                  span class="glyphicon glyphicon-new-window"
+                  |  Github source
 
-         
       == yield 
 
