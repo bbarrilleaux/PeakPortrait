@@ -10,20 +10,12 @@ html
     body
       header
         h1.logo PeakPortrait
-        h2 Visualize genomic location data by chromosome
+        h3 Visualize genomic location data by chromosome
+      ul class="nav nav-pills nav-justified"
+        li: a href="/" Generate a PeakPortrait
+        li: a href="/help" Get help
+        li: a href="http://github.com/biobonnie/PeakPortrait" target="_newtab" Github source
 
          
       == yield 
-
-
-    footer
-
-    p
-      ul class="nav"
-        li: a href="/" Home
-        li: a href="/help" Help
-    
-      ul class="about"
-        li: a href="http://bonniebarrilleaux.com" Bonnie Barrilleaux       
-        li: a href="http://github.com/biobonnie/PeakPortrait" Github source
 
