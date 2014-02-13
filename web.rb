@@ -6,9 +6,8 @@ require 'base64'
 require 'sass'
 require 'coffee_script'
 require 'bootstrap-sass'
-
-set :slim, :pretty => true
-set :root, File.dirname(__FILE__)
+require 'sinatra/base'
+require 'sinatra/assetpack'
 
 class ChromosomeDataFile
   def initialize(params = {})
@@ -63,54 +62,79 @@ class ChromosomeDataFile
   end
 end
 
-get '/styles.css' do
-  scss :styles
-end
 
-get '/' do
-  @data_file = ChromosomeDataFile.new 
-  slim :index
-end
+class PeakPortrait < Sinatra::Base
 
-post '/' do
-  @data_file = ChromosomeDataFile.new params
-  return slim :index unless @data_file.valid?
-  R.start_column = @data_file.start_column
-  R.end_column = @data_file.end_column
-  R.score_column = @data_file.score_column
-  temp_file_path = "./tmp/input.txt"
-  R.file = temp_file_path
-  @data_file.write_temp_file(temp_file_path)
- 
-#  print "start col = %d" % @data_file.start_column
-#  print "end col = %d" % @data_file.end_column
-#  print "score col = %d" % @data_file.score_column
+  register Sinatra::AssetPack
+  
+  set :slim, :pretty => true
+  set :root, File.dirname(__FILE__)
 
-  R.eval <<EOF
-    library(ggplot2)
-    library(gtools) # for reordering chromosome names
-    source("./R/prepare_data.r")    
-    data <- parsePeakFile(file, start_column, end_column, score_column)
-    species <- checkSpecies(data)
-    data <- rbind(data, fetchChromosomeLengths(species))
-    data$Chromosome <- factor(data$Chromosome, mixedsort(levels(data$Chromosome)))
-    theme_set(theme_gray(base_size = 18)) # make fonts bigger
-    png("./tmp/graph.png", type="cairo-png", width = 900, height=600)
-      hist_results <- ggplot(data, aes(x = loc/1000000, colour = Chromosome, weight = size))
-      hist_results + geom_freqpoly() + 
-        xlab("Position along chromosome (Mbp)") + ylab("Intensity") +
-        facet_wrap("Chromosome", drop = FALSE, scales = "free_x")
-   dev.off()
-EOF
-  @species = R.species
-  @data_file.delete_temp_file(temp_file_path)
-  if File.exists?("./tmp/graph.png")
-    @data_uri = Base64.strict_encode64(File.open("./tmp/graph.png", "rb").read)
-    File.delete("./tmp/graph.png")
+  assets do
+    serve '/js',     from: 'app/js'       
+    serve '/css',    from: 'app/css'       
+    serve '/image', from: 'app/image'    
+
+    js :application, ['/js/*.js']
+    css :application, ['/css/*.css']
+
+    js_compression  :jsmin   
+    css_compression :sass  
   end
-  slim :graph 
-end
 
-get '/help' do
-  slim :help
+  get '/styles.css' do
+    scss :styles
+  end
+
+  get '/' do
+    @data_file = ChromosomeDataFile.new 
+    slim :index
+  end
+
+  post '/' do
+    @data_file = ChromosomeDataFile.new params
+    return slim :index unless @data_file.valid?
+    R.start_column = @data_file.start_column
+    R.end_column = @data_file.end_column
+    R.score_column = @data_file.score_column
+    temp_file_path = "./tmp/input.txt"
+    R.file = temp_file_path
+    @data_file.write_temp_file(temp_file_path)
+   
+  #  print "start col = %d" % @data_file.start_column
+  #  print "end col = %d" % @data_file.end_column
+  #  print "score col = %d" % @data_file.score_column
+
+    R.eval <<EOF
+      library(ggplot2)
+      library(gtools) # for reordering chromosome names
+      source("./R/prepare_data.r")    
+      data <- parsePeakFile(file, start_column, end_column, score_column)
+      species <- checkSpecies(data)
+      data <- rbind(data, fetchChromosomeLengths(species))
+      data$Chromosome <- factor(data$Chromosome, mixedsort(levels(data$Chromosome)))
+      theme_set(theme_gray(base_size = 18)) # make fonts bigger
+      png("./tmp/graph.png", type="cairo-png", width = 900, height=600)
+        hist_results <- ggplot(data, aes(x = loc/1000000, colour = Chromosome, weight = size))
+        hist_results + geom_freqpoly() + 
+          xlab("Position along chromosome (Mbp)") + ylab("Intensity") +
+          facet_wrap("Chromosome", drop = FALSE, scales = "free_x")
+     dev.off()
+EOF
+    @species = R.species
+    @data_file.delete_temp_file(temp_file_path)
+    if File.exists?("./tmp/graph.png")
+      @data_uri = Base64.strict_encode64(File.open("./tmp/graph.png", "rb").read)
+      File.delete("./tmp/graph.png")
+    end
+    slim :graph 
+  end
+
+  get '/help' do
+    slim :help
+  end
+
+  # start the server if ruby file executed directly
+  run! if app_file == $0
+
 end
