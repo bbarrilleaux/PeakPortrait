@@ -1,7 +1,6 @@
 script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript"
 
 coffee:
-  
   toggleScoreInput = () ->
     if document.getElementById("score_column").disabled is true
       document.getElementById("score_column").disabled = false
@@ -10,35 +9,40 @@ coffee:
     return
   window.toggleScoreInput = toggleScoreInput
 
-
-
+  window.onload = toggleActiveNav = () ->
+    document.getElementById("home").setAttribute('class','active')
+    if document.getElementById("help").getAttribute 'class'
+      document.getElementById("help").removeAttribute 'class'
 p
 p
 
 - unless @data_file.errors.empty?
-  h2 There was a problem with your submission:
-  ul
-    - for error in @data_file.errors
-      li
-        = error
+  div class="alert alert-danger"
+    h4 There was a problem with your submission:
+    ul
+      - for error in @data_file.errors
+        li
+          = error
 
-form action="/" method="POST" enctype='multipart/form-data' class="form-horizontal"
-  p
-  label for="fileInput" Select a file containing genomic interval data to graph.
-  input type="file" name="file" class="btn btn-default btn-file" id="fileInput"
-  p
-  label for="fileInput" File type: 
-  select class="form-control" name="file_type" 
-    option BED
-    option GFF
-    option narrowPeak
-  p
-  label for="use_peak_widths" Incorporate peak width and height information into the graph (optional):
-  p
-  input type="checkbox" class="checkbox-inline" name="use_peak_widths" id="use_peak_widths" value="yes"  Use peak widths?
-  p
-  input type="checkbox" class="checkbox-inline" name="use_score" id="use_score" value="yes" onclick="toggleScoreInput();"  Use score?
-  p
-  input type="text" class="form-control bfh-number" name="score_column" id="score_column" disabled="true" placeholder="If using scores, enter number of score column, or leave it blank to guess from the file type."
-  p
-  input.button type="submit" value="Graph it!" class="btn btn-primary btn-lg btn-block"
+div class="bs-callout bs-callout-info"
+  h3 Generate a PeakPortrait from a file containing genomic regions.
+  form action="/" method="POST" enctype='multipart/form-data' class="form-horizontal"
+    p
+    label for="fileInput" Select a file containing genomic interval data to graph.
+    input type="file" name="file" class="btn btn-default btn-file" id="fileInput"
+    p
+    label for="fileInput" File type: 
+    select class="form-control" name="file_type" 
+      option BED
+      option GFF
+      option narrowPeak
+    p
+    label for="use_peak_widths" Incorporate peak width and height information into the graph (optional):
+    p
+    input type="checkbox" class="checkbox-inline" name="use_peak_widths" id="use_peak_widths" value="yes"  Use peak widths?
+    p
+    input type="checkbox" class="checkbox-inline" name="use_score" id="use_score" value="yes" onclick="toggleScoreInput();"  Use score?
+    p
+    input type="text" class="form-control bfh-number" name="score_column" id="score_column" disabled="true" placeholder="If using scores, enter number of score column, or leave it blank to guess from the file type."
+    p
+    input.button type="submit" value="Graph it!" class="btn btn-primary btn-lg btn-block"

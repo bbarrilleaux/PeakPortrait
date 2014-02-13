@@ -1,58 +1,50 @@
 coffee:
-	
-	showHide = (shID) ->
-		if document.getElementById(shID)
-			unless document.getElementById(shID).style.display is "block"
-				document.getElementById(shID).style.display = "block"
-			else
-				document.getElementById(shID).style.display = "none"
-		return
-	window.showHide = showHide
+	window.onload = toggleActiveNav = () ->
+    	document.getElementById("help").setAttribute('class','active')
+    	if document.getElementById("home").getAttribute 'class'
+    		document.getElementById("home").removeAttribute 'class'
+
 
 p
 
-a href="#" id="portrait-show" class="showLink" onclick="showHide('portrait');return false;" What is a PeakPortrait?
-
+div class="bs-callout bs-callout-info"
+	h4 What is a PeakPortrait?
+	| PeakPortrait is a tool to produce graphs of chromosome location analysis. These graphs allow scientists to see the overall shape of their data at a glance, at a broad, chromosome-wide scale. PeakPortrait uses the ggplot2 package in R to generate histograms from text files of genomic locations. PeakPortrait is written in Ruby, using the RinRuby library to access R. 
 p
-
-div id="portrait" class="more" 
-	| PeakPortrait is a tool to produce graphs of chromosome location analysis. These graphs allow scientists to see the overall shape of their data at a glance, at a broad, chromosome-wide scale. PeakPortrait uses the ggplot2 package in R to generate histograms from BED files of genomic locations. PeakPortrait is written in Ruby, using the RinRuby library to access R. 
-    p
+p
     
-a href="#" id="formats-show" class="showLink" onclick="showHide('formats');return false;" What file formats can I use?
-
-p
-
-div id="formats" class="more" 
+div class="bs-callout bs-callout-info"
+	h4 What file formats will work?
 	| The input file should be a tab-delimited text file containing chromosome names and coordinates. Allowed formats include BED, GFF, and ENCODE narrowPeak or broadPeak, or any file with the same columns of information. Chromosome names should be located in the first column, in the format "chr1", "chr2", etc. 
 	p
 	a href="http://genome.ucsc.edu/FAQ/FAQformat.html" UCSC FAQ: Data file formats
-	
+p
 p
 
-a href="#" id="species-show" class="showLink" onclick="showHide('species');return false;" How does mouse and human species detection work? 
-
-p
-div id="species" class="more" 
+div class="bs-callout bs-callout-info"
+	h4 How does mouse and human species detection work? 
 	| The species is automatically identified based on the fact that humans have more chromosomes than mice. A files containing any data from chromosomes 20, 21, and/or 22 is likely to be human data, while a file without any data from those chromosomes is likely to be mouse data. 
 	p
 	| Graph axes are automatically set to the lengths of the chromosomes obtained from the Genome Reference Consortium (GRCm38.p2 for mouse, and GRCh37.p13 for human). These lengths have remained fairly constant (no more than ~1% change in length) for the past several genome builds, so the graph axes are also roughly compatible with data aligned to any of the past several genome builds (e.g. mm8, mm9, or mm10 for mouse data; hg17, hg18, or hg19 for human data).
-
 p
-a href="" id="species2-show" class="showLink" onclick="showHide('species2');return false;" What if I have a species other than mouse or human? 
-
 p
-div id="species2" class="more" 
+
+div class="bs-callout bs-callout-info"
+	h4 What if I have a species other than mouse or human? 
 	| That's okay! If a file is uploaded that contains too few chromosomes to be mouse data (i.e. no data from chromosomes 18 or 19), the species is considered "unknown" and the x-axis limits are determined by the data itself. This makes it possible, although not necessarily recommended, to use PeakPortrait to display data from other species including C. elegans or A. thaliana.
-	
 p
-a href="" id="peakwidths-show" class="showLink" onclick="showHide('peakwidths');return false;" How are the peak widths and intensities used? 
 p
-div id="peakwidths" class="more" 
+
+div class="bs-callout bs-callout-info"
+	h4 How are the peak widths and intensities used? 
 	| If the "use peak widths" option is selected, each region is weighted by its width, so that wide regions are weighted more heavily than small regions. 
 	p
 	| If a column of intensity/score values is selected, each region is weighted by its intensity, so that regions of high intensity are weighted more heavily than those of lesser intensity. (For BED and ENCODE files, intensity values are usually located in column 5. For GFF files, intensity values are usually located in column 6.)
 	p
 	| If both options are selected, both intensity and width will be used for weighting (as intensity * width). If neither option is selected, each region in the input file will be weighted equally in the graph. 
-	p
+p
+p
 
+div class="bs-callout bs-callout-info"
+	h4 Is the data secure?
+	| PeakPortrait never saves uploaded data into a database, but rather uses temporary files. The data is permanently deleted as soon as the graph is generated.

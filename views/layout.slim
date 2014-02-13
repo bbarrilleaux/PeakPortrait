@@ -1,5 +1,6 @@
 doctype html
 link rel="stylesheet" media="screen, projection" href="/styles.css"
+
 html
 
   div id="wrapper"
@@ -13,16 +14,14 @@ html
           div class="navbar"
             div class="container"
               a class="navbar-brand" href="" PeakPortrait
-              ul class="nav nav-pills nav-justified" 
-                li class="active"
+              ul class="nav nav-pills" 
+                li id="home"
                   a href="/" 
-                    span class="glyphicon glyphicon-picture"
                     |  Generate a PeakPortrait
-                li: a href="/help" 
-                  span class="glyphicon glyphicon-question-sign"
-                  |  Get help                  
+                li id="help" 
+                  a href="/help" 
+                    |  Get help                  
                 li: a href="http://github.com/biobonnie/PeakPortrait" target="_newtab" 
-                  span class="glyphicon glyphicon-new-window"
                   |  Github source
 
       == yield 

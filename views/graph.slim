@@ -1,14 +1,18 @@
 
 - if @species
-	h3 Species detected: #{@species}.
+	div class="alert alert-info"
+		| Species detected: #{@species}.
 - else
-	h3 Failed to detect what species the data comes from. 
+	div class="alert alert-warning"
+		| Failed to detect what species the data comes from. 
 
 - if @data_uri
-	p
-	| The graph was created successfully.
-	p
+	div class="alert alert-success"
+		| The graph was created successfully.
+
 	img alt="graph" src="data:image/png;base64,#{@data_uri}"
 
 - else
-	| Failed to generate a graph.
+	div class="alert alert-danger"
+		| Failed to generate a graph.
+

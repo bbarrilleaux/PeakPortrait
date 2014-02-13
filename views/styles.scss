@@ -1,11 +1,12 @@
 @import "bootstrap";
+@import "bootstrap/theme";
 
 $blue:#164A44;
 $grey: #3C5552;
 $white:#FFFFFF;
 $lightblue:#8FB7B3;
 
-$background:$white;
+$background:#EBF1F5;
 $logo-color:$blue;
 $heading-color:$blue;
 
@@ -30,30 +31,11 @@ $heading-color:$blue;
     display: block;
 }
 
-/* show/hide extra text. */
-   .more {
-      display: none;
-      border-top: 1px solid #FFFFFF;
-      border-bottom: 1px solid #FFFFFF; }
-   a.showLink, a.hideLink {
-      text-decoration: none;
-        font-size: 24px;
-      color: $grey;
-      padding-left: 8px; }
-   a.hideLink { }
-   a.showLink:hover, a.hideLink:hover, a.showLink:visited {
-      border-bottom: 1px dotted $grey; color: $grey; }
-
-
-#wrapper {
-     width: 800px;
-     margin: 0 auto;
-}
 
 body{
   background:$background;
   padding:20px;
-  margin:2px;
+  margin:20px;
   } 
 
 header{
@@ -87,8 +69,6 @@ h3{
     text-align: center;
 }
 
-
-
 .nav a:link,a:visited{
     padding:10px;
     text-decoration:none;
@@ -96,3 +76,30 @@ h3{
     color:$grey;
 }
 
+.bs-callout {
+  margin: 20px 0;
+  padding: 15px 30px 15px 15px;
+}
+
+.bs-callout-info {
+  background-color: $white;
+
+}
+
+
+
+.bs-callout h4 {
+  margin-top: 0;
+  font-size: 24px;
+}
+
+
+
+.navbar {
+   background-color: $white;
+    background-image: none;
+}
+
+.navbar-brand{
+  font-size: 30px;
+}
