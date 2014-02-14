@@ -1,0 +1,19 @@
+coffee:
+	window.onload = toggleActiveNav = () ->
+    	document.getElementById("sample").setAttribute('class','active')
+    	if document.getElementById("home").getAttribute 'class'
+    		document.getElementById("home").removeAttribute 'class'
+    	if document.getElementById("help").getAttribute 'class'
+    		document.getElementById("help").removeAttribute 'class'
+
+
+p
+
+
+
+div class="bs-callout bs-callout-info"
+	h4 Sample output: differences between human and Neandertal genomes
+	| This graph shows the hot spots for differences between the human and Neandertal genomes, using a data set exported from the UCSC table browser as a BED file. The center of chromosome 1 and the beginning of chromosome 11 appear to be large peaks -- perhaps areas that might warrant closer study.
+p
+p
+img src="samplePortrait.png"

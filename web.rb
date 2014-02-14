@@ -45,6 +45,10 @@ class ChromosomeDataFile
     end
   end
 
+  def trap_r_errors
+      @errors << "Failed to parse file. It must be tab-delimited text."
+  end
+
   def write_temp_file(file_path)
     temp_file = @params[:file][:tempfile]
     FileUtils.mkdir_p(File.dirname(file_path))
@@ -71,9 +75,9 @@ class PeakPortrait < Sinatra::Base
   set :root, File.dirname(__FILE__)
 
   assets do
-    serve '/js',     from: 'app/js'       
-    serve '/css',    from: 'app/css'       
-    serve '/image', from: 'app/image'    
+    serve '/js',     from: 'public/js'       
+    serve '/css',    from: 'public/css'       
+    serve '/image', from: 'public/fonts'
 
     js :application, ['/js/*.js']
     css :application, ['/css/*.css']
@@ -101,37 +105,56 @@ class PeakPortrait < Sinatra::Base
     R.file = temp_file_path
     @data_file.write_temp_file(temp_file_path)
    
-  #  print "start col = %d" % @data_file.start_column
-  #  print "end col = %d" % @data_file.end_column
-  #  print "score col = %d" % @data_file.score_column
+#   print "start col = %d" % @data_file.start_column
+#    print "end col = %d" % @data_file.end_column
+#    print "score col = %d" % @data_file.score_column
 
     R.eval <<EOF
       library(ggplot2)
       library(gtools) # for reordering chromosome names
-      source("./R/prepare_data.r")    
-      data <- parsePeakFile(file, start_column, end_column, score_column)
-      species <- checkSpecies(data)
-      data <- rbind(data, fetchChromosomeLengths(species))
-      data$Chromosome <- factor(data$Chromosome, mixedsort(levels(data$Chromosome)))
-      theme_set(theme_gray(base_size = 18)) # make fonts bigger
-      png("./tmp/graph.png", type="cairo-png", width = 900, height=600)
-        hist_results <- ggplot(data, aes(x = loc/1000000, colour = Chromosome, weight = size))
-        hist_results + geom_freqpoly() + 
-          xlab("Position along chromosome (Mbp)") + ylab("Intensity") +
-          facet_wrap("Chromosome", drop = FALSE, scales = "free_x")
-     dev.off()
+      source("./R/prepare_data.r")   
+      data <- FALSE
+      errors <- 2
+      tryCatch({
+        data <- parsePeakFile(file, start_column, end_column, score_column)
+        species <- checkSpecies(data)
+        data <- rbind(data, fetchChromosomeLengths(species))
+        data$Chromosome <- factor(data$Chromosome, mixedsort(levels(data$Chromosome)))
+
+        theme_set(theme_gray(base_size = 18)) # make fonts bigger
+        png("./tmp/graph.png", type="cairo-png", width = 900, height=600)
+          hist_results <- ggplot(data, aes(x = loc/1000000, colour = Chromosome, weight = size))
+          hist_results <- hist_results + geom_freqpoly() + 
+            xlab("Position along chromosome (Mbp)") + ylab("Intensity") +
+            facet_wrap("Chromosome", drop = FALSE, scales = "free_x")
+          print(hist_results)
+        dev.off()
+        errors <<- as.integer(0)
+      }, error = function(e) errors <<- 1)      
 EOF
-    @species = R.species
+
+#    print "r errors #{R.errors}"
     @data_file.delete_temp_file(temp_file_path)
+    @data_uri = nil
+    
+    @data_file.trap_r_errors unless R.errors == 0
+    return slim :index unless @data_file.valid?
+
     if File.exists?("./tmp/graph.png")
+      @species = R.species
       @data_uri = Base64.strict_encode64(File.open("./tmp/graph.png", "rb").read)
       File.delete("./tmp/graph.png")
     end
+
     slim :graph 
   end
 
   get '/help' do
     slim :help
+  end
+
+  get '/sample' do
+    slim :sample
   end
 
   # start the server if ruby file executed directly

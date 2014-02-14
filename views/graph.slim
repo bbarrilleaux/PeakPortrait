@@ -1,3 +1,10 @@
+coffee:
+  window.onload = toggleActiveNav = () ->
+    document.getElementById("home").setAttribute('class','active')
+    if document.getElementById("help").getAttribute 'class'
+      document.getElementById("help").removeAttribute 'class'
+    if document.getElementById("sample").getAttribute 'class'
+      document.getElementById("sample").removeAttribute 'class'
 
 - if @species
 	div class="alert alert-info"
