@@ -1,73 +1,30 @@
 
 @import "bootstrap";
-@import "bootstrap/theme";
 
+$button: #1C4570;
+$buttonhover: #193E65;
+$logo: #005C5C;
+$white:#FEFEFE;
+$darktext: #122B47;
+$background:#EBF1F1;
+$almostblack: #292929;
 
-$blue:#164A44;
-$grey: #3C5552;
-$white:#FFFFFF;
-$lightblue:#8FB7B3;
-
-$background:#EBF1F5;
-$logo-color:$blue;
-$heading-color:$blue;
-
-/* this makes a pretty file upload button */
-.btn-file {
-    position: relative;
-    overflow: hidden;
-}
-.btn-file input[type=file] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    min-width: 100%;
-    min-height: 100%;
-    font-size: 999px;
-    text-align: right;
-    filter: alpha(opacity=0);
-    opacity: 0;
-    outline: none;
-    background: white;
-    cursor: inherit;
-    display: block;
-}
 
 body{
   background:$background;
-  padding:20px;
-  margin:20px;
+  padding:10px;
+  margin:10px;
   } 
 
 header{
-  color:$blue;
   padding:20px;
   font-weight:bold;
   text-align:center;
 }
 
-h1.logo{
-  font-family: helvetica,arial,sans-serif;
-  font-size: 20px;
-  color:$logo-color;
-  margin-left:auto;
-  margin-right:auto;
-  margin-bottom:20px;
-  margin-top:20px;
-  width:70%;
-  text-align: center;
-  font-weight: normal;
-  background: transparent url(/logo.png) 10% 0 no-repeat;
-  }
-
-
-h2{
-  margin: 0 0 10px 0;
-}
-
-h3{
-    margin: 5px;
-    text-align: center;
+h3 {
+  color: $buttonhover;
+  padding-bottom: 10px;
 }
 
 .bs-callout {
@@ -77,25 +34,34 @@ h3{
 
 .bs-callout-info {
   background-color: $white;
-
+  color: $almostblack;
 }
 
 .bs-callout h4 {
   margin-top: 0;
   font-size: 24px;
+  color: $darktext;
 }
 
 .nav a:link,a:visited{
     padding:10px;
     text-decoration:none;
     font-weight:bold;
-    color:$grey;
+    color:$logo;
 }
 
 .navbar {
    background-color: $white;
     background-image: none;
     height:55px;
+}
+
+.navbar .nav-pills > .active > a {
+  background-color: $button;
+}
+.navbar .nav-pills > .active > a:hover,
+.navbar .nav-pills > .active > a:focus {
+  background-color: $buttonhover;
 }
 
 .navbar .navbar .container .nav { 
@@ -105,5 +71,13 @@ h3{
 .navbar-brand{
   font-size: 35px;
   text-shadow: 0 1px 1px rgba(0,0,0,0.2);
-  color: $grey;
+  color: $logo;
+}
+
+.btn-primary {
+  background-color: $button;
+}
+
+.btn-primary:hover {
+  background-color: $buttonhover;
 }

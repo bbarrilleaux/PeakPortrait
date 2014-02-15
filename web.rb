@@ -113,21 +113,24 @@ class PeakPortrait < Sinatra::Base
       library(ggplot2)
       library(gtools) # for reordering chromosome names
       source("./R/prepare_data.r")   
-      data <- FALSE
+      gdata <- FALSE
       errors <- 2
       tryCatch({
-        data <- parsePeakFile(file, start_column, end_column, score_column)
-        species <- checkSpecies(data)
-        data <- rbind(data, fetchChromosomeLengths(species))
-        data$Chromosome <- factor(data$Chromosome, mixedsort(levels(data$Chromosome)))
+        gdata <- parsePeakFile(file, start_column, end_column, score_column)
+        species <- checkSpecies(gdata)
+        gdata <- rbind(gdata, fetchChromosomeLengths(species))
+        centromeres <- fetchCentromeres(species)
+        gdata$Chromosome <- factor(gdata$Chromosome, mixedsort(levels(gdata$Chromosome)))
 
         theme_set(theme_gray(base_size = 18)) # make fonts bigger
         png("./tmp/graph.png", type="cairo-png", width = 900, height=600)
-          hist_results <- ggplot(data, aes(x = loc/1000000, colour = Chromosome, weight = size))
-          hist_results <- hist_results + geom_freqpoly() + 
-            xlab("Position along chromosome (Mbp)") + ylab("Intensity") +
-            facet_wrap("Chromosome", drop = FALSE, scales = "free_x")
-          print(hist_results)
+          hist_results <- ggplot(gdata, aes(x = loc/1000000, weight = size))
+          hist_results <- hist_results + geom_freqpoly(size = 1.2) + 
+            xlab("Position along chromosome (Mbp)") + ylab("Intensity") 
+          if (species == "human") { hist_results <- hist_results + geom_vline(aes(xintercept = start/1000000), data = centromeres) }
+
+          hist_results <- hist_results + facet_wrap(~ Chromosome, drop = FALSE, scales = "free_x")
+          suppressMessages(print(hist_results))
         dev.off()
         errors <<- as.integer(0)
       }, error = function(e) errors <<- 1)      

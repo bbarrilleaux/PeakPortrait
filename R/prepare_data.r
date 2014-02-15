@@ -5,31 +5,31 @@ parsePeakFile <- function(file, start_column = 2, end_column = 0, score_column =
     peaks <- read.table(file, sep = "\t", header = TRUE)
   }
 
-  data <- data.frame(as.factor(peaks[, 1]), peaks[, start_column])
+  genomicdata <- data.frame(as.factor(peaks[, 1]), peaks[, start_column])
 
   if (end_column && !score_column) { 
-    data <- cbind(data, peaks[, end_column] - peaks[, start_column]) 
+    genomicdata <- cbind(genomicdata, peaks[, end_column] - peaks[, start_column]) 
   } else if (!end_column && score_column) {
-    data <- cbind(data, peaks[, score_column])
+    genomicdata <- cbind(genomicdata, peaks[, score_column])
   } else if (end_column && score_column) {
-    data <- cbind(data, 
+    genomicdata <- cbind(genomicdata, 
                   (peaks[, end_column] - peaks[, start_column]) * peaks[, score_column])
   } else {
-    data <- cbind(data, rep(1, nrow(data)))
+    genomicdata <- cbind(genomicdata, rep(1, nrow(genomicdata)))
   }
 
-  names(data) <- c("Chromosome", "loc", "size")
-  return(data)
+  names(genomicdata) <- c("Chromosome", "loc", "size")
+  return(genomicdata)
 }
 
-checkSpecies <- function(data) {
-  if ("chr20" %in% data$Chromosome | 
-      "chr21" %in% data$Chromosome | 
-      "chr22" %in% data$Chromosome) {
+checkSpecies <- function(genomicdata) {
+  if ("chr20" %in% genomicdata$Chromosome | 
+      "chr21" %in% genomicdata$Chromosome | 
+      "chr22" %in% genomicdata$Chromosome) {
     return("human")
-  } else if ("chr19" %in% data$Chromosome | 
-             "chr18" %in% data$Chromosome | 
-             "chr17" %in% data$Chromosome) {
+  } else if ("chr19" %in% genomicdata$Chromosome | 
+             "chr18" %in% genomicdata$Chromosome | 
+             "chr17" %in% genomicdata$Chromosome) {
     return("mouse")
   } else {
     return("unknown")
@@ -44,4 +44,16 @@ fetchChromosomeLengths <- function(species) {
   } else {
     return()
   }
+}
+
+
+fetchCentromeres <- function(species) {
+  if (species == "human") {
+    centromeres <- read.table("./Data/HumanCentromerePositions.txt", sep = "\t")
+  } else {
+    #all mouse chromosomes are telocentric, so it's pointless to plot the centromeres.
+    centromeres <- data.frame("chr1", 0, 0) 
+  }
+  names(centromeres) <- c("Chromosome", "start", "end")
+  return(centromeres)
 }
