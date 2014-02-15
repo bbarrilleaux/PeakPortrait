@@ -6,7 +6,7 @@ coffee:
     if document.getElementById("sample").getAttribute 'class'
       document.getElementById("sample").removeAttribute 'class'
 
-- if @species
+- if @species != "unknown"
 	div class="alert alert-info"
 		| Species detected: #{@species}.
 - else
@@ -15,7 +15,7 @@ coffee:
 
 - if @data_uri
 	div class="alert alert-success"
-		| The graph was created successfully.
+		| The graph was created successfully as a PNG image. Right-click -> "Save as..."
 
 	img alt="graph" src="data:image/png;base64,#{@data_uri}"
 

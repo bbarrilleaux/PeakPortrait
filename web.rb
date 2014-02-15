@@ -45,8 +45,8 @@ class ChromosomeDataFile
     end
   end
 
-  def trap_r_errors
-      @errors << "Failed to parse file. It must be tab-delimited text."
+  def add_error(error_message)
+      @errors << error_message
   end
 
   def write_temp_file(file_path)
@@ -98,6 +98,7 @@ class PeakPortrait < Sinatra::Base
   post '/' do
     @data_file = ChromosomeDataFile.new params
     return slim :index unless @data_file.valid?
+
     R.start_column = @data_file.start_column
     R.end_column = @data_file.end_column
     R.score_column = @data_file.score_column
@@ -105,9 +106,9 @@ class PeakPortrait < Sinatra::Base
     R.file = temp_file_path
     @data_file.write_temp_file(temp_file_path)
    
-#   print "start col = %d" % @data_file.start_column
-#    print "end col = %d" % @data_file.end_column
-#    print "score col = %d" % @data_file.score_column
+   print "start col = %d" % @data_file.start_column
+    print "end col = %d" % @data_file.end_column
+    print "score col = %d" % @data_file.score_column
 
     R.eval <<EOF
       library(ggplot2)
@@ -115,13 +116,15 @@ class PeakPortrait < Sinatra::Base
       source("./R/prepare_data.r")   
       gdata <- FALSE
       errors <- 2
-      tryCatch({
+#      tryCatch({
         gdata <- parsePeakFile(file, start_column, end_column, score_column)
         species <- checkSpecies(gdata)
         gdata <- rbind(gdata, fetchChromosomeLengths(species))
         centromeres <- fetchCentromeres(species)
         gdata$Chromosome <- factor(gdata$Chromosome, mixedsort(levels(gdata$Chromosome)))
-
+        errors <<- as.integer(0)
+#      }, error = function(e) errors <<- 1)
+#      try({
         theme_set(theme_gray(base_size = 18)) # make fonts bigger
         png("./tmp/graph.png", type="cairo-png", width = 900, height=600)
           hist_results <- ggplot(gdata, aes(x = loc/1000000, weight = size))
@@ -130,24 +133,26 @@ class PeakPortrait < Sinatra::Base
           if (species == "human") { hist_results <- hist_results + geom_vline(aes(xintercept = start/1000000), data = centromeres) }
 
           hist_results <- hist_results + facet_wrap(~ Chromosome, drop = FALSE, scales = "free_x")
-          suppressMessages(print(hist_results))
+          print(hist_results)
         dev.off()
-        errors <<- as.integer(0)
-      }, error = function(e) errors <<- 1)      
+#        })
 EOF
 
 #    print "r errors #{R.errors}"
-    @data_file.delete_temp_file(temp_file_path)
+#    @data_file.delete_temp_file(temp_file_path)
     @data_uri = nil
     
-    @data_file.trap_r_errors unless R.errors == 0
-    return slim :index unless @data_file.valid?
+    @data_file.add_error("Failed to parse file. It must be tab-delimited text.") unless R.errors == 0
 
     if File.exists?("./tmp/graph.png")
       @species = R.species
       @data_uri = Base64.strict_encode64(File.open("./tmp/graph.png", "rb").read)
       File.delete("./tmp/graph.png")
+    else 
+      @data_file.add_error("Failed to generate a graph.")
     end
+
+    return slim :index unless @data_file.valid?
 
     slim :graph 
   end
