@@ -27,6 +27,9 @@ h3 {
   padding-bottom: 10px;
 }
 
+.form-group{
+  padding: 5px 1px 5px 20px;
+}
 .bs-callout {
   margin: 20px 0;
   padding: 15px 30px 15px 15px;
@@ -82,3 +85,5 @@ h3 {
 .btn-primary:hover {
   background-color: $buttonhover;
 }
+
+input[type="radio"]{margin:1px 8px 1px 8px;}

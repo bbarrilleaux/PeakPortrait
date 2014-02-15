@@ -6,12 +6,15 @@ coffee:
     if document.getElementById("sample").getAttribute 'class'
       document.getElementById("sample").removeAttribute 'class'
 
+p
+p
+p
 - if @species != "unknown"
 	div class="alert alert-info"
 		| Species detected: #{@species}.
 - else
 	div class="alert alert-warning"
-		| Failed to detect what species the data comes from. 
+		| Species: unknown. 
 
 - if @data_uri
 	div class="alert alert-success"
