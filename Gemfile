@@ -12,3 +12,8 @@ gem 'sass'
 gem 'coffee-script'
 gem 'bootstrap-sass'
 gem 'sinatra-assetpack'
+
+group :test do
+  gem 'rspec'
+  gem 'capybara'
+end
