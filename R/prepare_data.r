@@ -1,20 +1,30 @@
 parsePeakFile <- function(file, start_column = 2, end_column = 0, score_column = 0) {
   peaks <- read.table(file, sep = "\t", header = FALSE)
-  # detect header line if it exists
+  # detect header line -- if it exists, it'll make numeric columns import as factors
   if (is.factor(peaks[, start_column])) { 
     peaks <- read.table(file, sep = "\t", header = TRUE)
   }
 
+  # want the chromosome names to be all lowercase, except M, X, and Y in caps. 
+  peaks[, 1] <- tolower(peaks[, 1])
+  peaks[, 1] <- gsub("x", "X", peaks[, 1])
+  peaks[, 1] <- gsub("y", "Y", peaks[, 1])
+  peaks[, 1] <- gsub("m", "M", peaks[, 1])
+
   genomicdata <- data.frame(as.factor(peaks[, 1]), peaks[, start_column])
 
   if (end_column && !score_column) { 
+    # use peak widths
     genomicdata <- cbind(genomicdata, peaks[, end_column] - peaks[, start_column]) 
   } else if (!end_column && score_column) {
+    # use peak scores
     genomicdata <- cbind(genomicdata, peaks[, score_column])
   } else if (end_column && score_column) {
+    # use peak widths and scores
     genomicdata <- cbind(genomicdata, 
                   (peaks[, end_column] - peaks[, start_column]) * peaks[, score_column])
   } else {
+    # just add 1s if not using peaks or scores
     genomicdata <- cbind(genomicdata, rep(1, nrow(genomicdata)))
   }
 

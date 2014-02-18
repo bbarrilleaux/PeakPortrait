@@ -54,9 +54,10 @@ class ChromosomeDataFile
     file_contents = temp_file.read
     file_contents.gsub!(/\r\n?/, "\n") # make sure line endings are consistent
     file_contents.each_line do |line|
-        # only keep lines that start with "chr". other lines are probably headers/comments/junk.
-        dest_file.write(line) if /^chr/.match(line) 
+        # only keep lines that start with "chr" or "Chr". other lines are probably headers/comments/junk.
+        dest_file.write(line) if /^[Cc]hr/.match(line) 
     end
+    dest_file.close
   end
 
   def delete_temp_file(file_path)
@@ -76,10 +77,8 @@ class PeakPortrait < Sinatra::Base
     serve '/js',     from: 'public/js'       
     serve '/css',    from: 'public/css'       
     serve '/image', from: 'public/fonts'
-
     js :application, ['/js/*.js']
     css :application, ['/css/*.css']
-
     js_compression  :jsmin   
     css_compression :sass  
   end
@@ -113,17 +112,24 @@ class PeakPortrait < Sinatra::Base
       library(ggplot2)
       library(gtools) # for reordering chromosome names
       source("./R/prepare_data.r")   
-      gdata <- FALSE
-      errors <- 2
+      errors <- as.integer(0)
+
       tryCatch({
         gdata <- parsePeakFile(file, start_column, end_column, score_column)
+      }, error = function(e) errors <<- "Failed to parse file. It must be tab-delimited text.")
+
+      # if there are too many chromosome names, ggplot2 will get stuck 
+      # when it tries to graph them. need to return an error instead.
+      if((nlevels(gdata$Chromosome) > 50) && errors == 0) errors <<- "It looks like the file has more than 50 different chromosome names. Verify that column 1 contains chromosome names in a consistent format like: 'chr1', 'chr2'."
+
+      if(errors == 0) tryCatch({
         if(species == "Auto-detect") species <- checkSpecies(gdata)
         gdata <- rbind(gdata, fetchChromosomeLengths(species))
         centromeres <- fetchCentromeres(species)
         gdata$Chromosome <- factor(gdata$Chromosome, mixedsort(levels(gdata$Chromosome)))
-        errors <<- as.integer(0)
-      }, error = function(e) errors <<- 1)
-      try({
+        }, error = function(e) errors <<- "Failed to set axis limits for the selected species. Try using species = other.")
+
+      if(errors == 0) try({
         theme_set(theme_gray(base_size = 18)) # make fonts bigger
         png("./tmp/graph.png", type="cairo-png", width = 900, height=600)
           hist_results <- ggplot(gdata, aes(x = loc/1000000, weight = size))
@@ -138,18 +144,17 @@ class PeakPortrait < Sinatra::Base
       #EOF must be on its own line with no whitespace ahead of it.
 EOF
 
-    print "R errors: #{R.errors} "
     @data_file.delete_temp_file(temp_file_path)
     @data_uri = nil
     
-    @data_file.errors << "Failed to parse file. It must be tab-delimited text." unless R.errors == 0
+    @data_file.errors << R.errors unless R.errors == 0
 
     if File.exists?("./tmp/graph.png")
       @species = R.species
       @data_uri = Base64.strict_encode64(File.open("./tmp/graph.png", "rb").read)
       File.delete("./tmp/graph.png")
-    else 
-      @data_file.errors << "Failed to generate a graph."
+    elsif @data_file.valid? 
+      @data_file.errors << "Failed to generate a graph for unknown reasons. Check the data file: perhaps a column that's supposed to be numeric contains something other than numbers."
     end
 
     return slim :index unless @data_file.valid?
