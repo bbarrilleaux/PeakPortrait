@@ -50,14 +50,14 @@ class ChromosomeDataFile
   def write_temp_file(file_path)
     temp_file = @params[:file][:tempfile]
     FileUtils.mkdir_p(File.dirname(file_path))
-    dest_file = File.open(file_path, "w")
-    file_contents = temp_file.read
-    file_contents.gsub!(/\r\n?/, "\n") # make sure line endings are consistent
-    file_contents.each_line do |line|
-        # only keep lines that start with "chr" or "Chr". other lines are probably headers/comments/junk.
-        dest_file.write(line) if /^[Cc]hr/.match(line) 
+    File.open(file_path, "w") do |dest_file|
+      file_contents = temp_file.read
+      file_contents.gsub!(/\r\n?/, "\n") # make sure line endings are consistent
+      file_contents.each_line do |line|
+          # only keep lines that start with "chr" or "Chr". other lines are probably headers/comments/junk.
+          dest_file.write(line) if /^[Cc]hr/.match(line) 
+      end
     end
-    dest_file.close
   end
 
   def delete_temp_file(file_path)
