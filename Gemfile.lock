@@ -72,6 +72,7 @@ DEPENDENCIES
   bootstrap-sass
   capybara
   coffee-script
+  nokogiri
   pry
   rinruby
   rspec

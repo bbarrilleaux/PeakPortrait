@@ -96,19 +96,20 @@ class PeakPortrait < Sinatra::Base
     @data_file = ChromosomeDataFile.new params
     return slim :index unless @data_file.valid?
 
-    R.start_column = @data_file.start_column
-    R.end_column = @data_file.end_column
-    R.score_column = @data_file.score_column
-    R.species = @data_file.species
+    r = RinRuby.new(:echo => false) 
+    r.start_column = @data_file.start_column
+    r.end_column = @data_file.end_column
+    r.score_column = @data_file.score_column
+    r.species = @data_file.species
     temp_file_path = "./tmp/input.txt"
-    R.file = temp_file_path
+    r.file = temp_file_path
     @data_file.write_temp_file(temp_file_path)
    
-    print "start col = %d " % @data_file.start_column
-    print "end col = %d "   % @data_file.end_column
-    print "score col = %d " % @data_file.score_column
+#    print "start col = %d " % @data_file.start_column
+#    print "end col = %d "   % @data_file.end_column
+#    print "score col = %d " % @data_file.score_column
 
-    R.eval <<EOF
+    r.eval <<EOF
       library(ggplot2)
       library(gtools) # for reordering chromosome names
       source("./R/prepare_data.r")   
@@ -147,10 +148,10 @@ EOF
     @data_file.delete_temp_file(temp_file_path)
     @data_uri = nil
     
-    @data_file.errors << R.errors unless R.errors == 0
+    @data_file.errors << r.errors unless r.errors == 0
 
     if File.exists?("./tmp/graph.png")
-      @species = R.species
+      @species = r.species
       @data_uri = Base64.strict_encode64(File.open("./tmp/graph.png", "rb").read)
       File.delete("./tmp/graph.png")
     elsif @data_file.valid? 
