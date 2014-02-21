@@ -31,24 +31,40 @@ div class="bs-callout bs-callout-info"
       label for="fileInput" Select a file containing genomic interval data to graph.
       input type="file" name="file" class="btn btn-default btn-file" id="fileInput"
     div class="form-group"
-      label for="fileInput" File type: 
-      input type="radio" name="file_type" value="BED" id="BED" checked="checked" BED or BED-like 
-      input type="radio" name="file_type" value="GFF" id="GFF" GFF or GFF-like 
+      label for="file_type" File type:  
+      label for="BED" class="inputlabel"
+        input type="radio" name="file_type" value="BED" id="BED" checked="checked"  
+        | BED or BED-like
+      label for="GFF" class="inputlabel"
+        input type="radio" name="file_type" value="GFF" id="GFF"  
+        | GFF or GFF-like
       span class="help-block" Chromosome start and end coordinates are found in columns 2 and 3 in BED format, columns 4 and 5 in GFF format.
     p
     div class="form-group"
       label for="species" Species: 
-      input type="radio" name="species" value="Auto-detect" checked="checked" Auto-detect 
-      input type="radio" name="species" value="human" Human    
-      input type="radio" name="species" value="mouse" Mouse 
-      input type="radio" name="species" value="unknown" Other 
+      label for="Auto-detect" class="inputlabel"
+        input type="radio" name="species" value="Auto-detect" id="Auto-detect" checked="checked" 
+        | Auto-detect 
+      label for="human" class="inputlabel"
+        input type="radio" name="species" value="human" id="human" 
+        | Human    
+      label for="mouse" class="inputlabel"
+        input type="radio" name="species" value="mouse" id="mouse" 
+        | Mouse 
+      label for="unknown" class="inputlabel"
+        input type="radio" name="species" value="unknown" id="unknown" 
+        | Other 
     p
     div class="form-group"
-      label for="use_peak_widths" Incorporate peak width and height information into the graph (optional):
+      label for="options" Incorporate peak width and height information into the graph (optional):
       p
-      input type="checkbox" class="checkbox-inline" name="use_peak_widths" id="use_peak_widths" value="yes"  Use peak widths?
+      label for="use_peak_widths" class="inputlabel"
+        input type="checkbox" class="checkbox-inline" name="use_peak_widths" id="use_peak_widths" value="yes"  
+        |  Use peak widths?
       p
-      input type="checkbox" class="checkbox-inline" name="use_score" id="use_score" value="yes" onclick="toggleScoreInput();"  Use score? Column containing score values: 
+      label for="use_score" class="inputlabel"
+        input type="checkbox" class="checkbox-inline" name="use_score" id="use_score" value="yes" onclick="toggleScoreInput();"  
+        |  Use score? Column containing score values:  
       select class="form-control bfh-number" name="score_column" id="score_column" disabled="true" 
         option value="0" Use default
         option value="1" 1
