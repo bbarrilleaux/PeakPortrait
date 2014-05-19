@@ -13,6 +13,7 @@ gem 'sass'
 gem 'coffee-script'
 gem 'bootstrap-sass'
 gem 'sinatra-assetpack'
+gem 'rack-google-analytics'
 
 group :test do
   gem 'rspec'

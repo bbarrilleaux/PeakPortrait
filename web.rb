@@ -7,6 +7,7 @@ require 'coffee_script'
 require 'bootstrap-sass'
 require 'sinatra/base'
 require 'sinatra/assetpack'
+require 'rack-google-analytics'
 
 class ChromosomeDataFile
   def initialize(params = {})
@@ -72,6 +73,8 @@ class PeakPortrait < Sinatra::Base
   
   set :slim, :pretty => true
   set :root, File.dirname(__FILE__)
+
+  use Rack::GoogleAnalytics, :tracker => 'UA-51132344-1'
 
   assets do
     serve '/js',     from: 'public/js'       
